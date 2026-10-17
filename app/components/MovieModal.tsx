@@ -127,7 +127,7 @@ export default function MovieModal({ imdbID, onClose }: MovieModalProps) {
           </div>
         ) : (
           <div className="grid gap-6 p-6 md:grid-cols-[280px_1fr] md:p-8">
-            <div className="aspect-[2/3] overflow-hidden rounded-2xl bg-slate-800">
+            <div className="mx-auto aspect-[2/3] w-48 overflow-hidden rounded-2xl bg-slate-800 md:w-auto">
               {hasValue(movie.Poster) ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={movie.Poster} alt={`Póster de ${movie.Title}`} className="h-full w-full object-cover" />
