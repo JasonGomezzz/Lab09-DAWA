@@ -5,6 +5,7 @@ import axios from 'axios'
 import { getErrorMessage } from '@/lib/api-error'
 import { hasValue, typeLabel } from '@/lib/format'
 import type { MovieDetail } from '@/types/omdb'
+import Poster from './Poster'
 
 interface MovieModalProps {
   imdbID: string
@@ -128,12 +129,7 @@ export default function MovieModal({ imdbID, onClose }: MovieModalProps) {
         ) : (
           <div className="grid gap-6 p-6 md:grid-cols-[280px_1fr] md:p-8">
             <div className="mx-auto aspect-[2/3] w-48 overflow-hidden rounded-2xl bg-slate-800 md:w-auto">
-              {hasValue(movie.Poster) ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={movie.Poster} alt={`Póster de ${movie.Title}`} className="h-full w-full object-cover" />
-              ) : (
-                <div className="flex h-full items-center justify-center text-6xl" aria-hidden="true">🎞️</div>
-              )}
+              <Poster src={movie.Poster} title={movie.Title} />
             </div>
 
             <div className="space-y-5">
