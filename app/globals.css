@@ -10,6 +10,19 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Videoclub: pared azul, estantes de madera y stickers */
+  --color-wall: #163f6e;
+  --color-wall-deep: #0f2d4e;
+  --color-cream: #fdf3d8;
+  --color-sticker: #ffd028;
+  --color-sign: #e5338a;
+  --color-sign-deep: #a31e63;
+  --color-wood: #9a6a3f;
+  --color-wood-light: #c99863;
+  --color-wood-dark: #5a3a20;
+  --font-sign: var(--font-bowlby);
+  --font-shop: var(--font-figtree);
 }
 
 @media (prefers-color-scheme: dark) {
