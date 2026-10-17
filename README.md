@@ -43,6 +43,7 @@ app/
 ├── components/
 │   ├── MovieCard.tsx               # Tarjeta de película o serie
 │   ├── MovieModal.tsx              # Detalle completo (CSR)
+│   ├── Poster.tsx                  # Póster con marcador si el enlace de OMDb ya no existe
 │   └── SiteHeader.tsx              # Encabezado y navegación
 ├── api/omdb/route.ts               # Endpoint que reenvía a OMDb sin exponer la clave
 ├── pokemon-csr/page.tsx            # Ejercicio 1.1 — Pokémon con CSR
