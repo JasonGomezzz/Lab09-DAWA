@@ -128,7 +128,7 @@ export default function MovieModal({ imdbID, onClose }: MovieModalProps) {
           </div>
         ) : (
           <div className="grid gap-6 p-6 md:grid-cols-[280px_1fr] md:p-8">
-            <div className="mx-auto aspect-[2/3] w-48 overflow-hidden rounded-2xl bg-slate-800 md:w-auto">
+            <div className="mx-auto aspect-[2/3] w-48 overflow-hidden rounded-2xl bg-slate-800 md:mx-0 md:w-full">
               <Poster src={movie.Poster} title={movie.Title} />
             </div>
 
