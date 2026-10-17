@@ -2,17 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
+import { getErrorMessage } from '@/lib/api-error'
 import { hasValue, typeLabel } from '@/lib/format'
 import type { MovieDetail } from '@/types/omdb'
 
 interface MovieModalProps {
   imdbID: string
   onClose: () => void
-}
-
-function getErrorMessage(error: unknown) {
-  if (axios.isAxiosError(error)) return error.response?.data?.error ?? 'No se pudo conectar con el servidor'
-  return 'Ocurrió un error inesperado'
 }
 
 export default function MovieModal({ imdbID, onClose }: MovieModalProps) {
