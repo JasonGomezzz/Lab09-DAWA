@@ -83,14 +83,14 @@ export default function MovieModal({ imdbID, onClose }: MovieModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/80 backdrop-blur-sm sm:items-center sm:p-6"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-wall-deep/85 sm:items-center sm:p-6"
       onClick={onClose}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-label={movie?.Title ?? 'Detalle de la película o serie'}
-        className="relative max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-t-3xl border border-white/10 bg-slate-900 text-slate-100 shadow-2xl sm:rounded-3xl"
+        className="relative max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-t-2xl bg-cream text-wall-deep shadow-[0_10px_0_0_rgb(0_0_0/0.35)] sm:rounded-2xl"
         onClick={(event) => event.stopPropagation()}
       >
         <button
@@ -98,78 +98,87 @@ export default function MovieModal({ imdbID, onClose }: MovieModalProps) {
           type="button"
           onClick={onClose}
           aria-label="Cerrar detalle"
-          className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-lg text-white transition hover:bg-amber-400 hover:text-slate-950"
+          className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-wall-deep text-lg text-cream transition-colors hover:bg-sign"
         >
           ✕
         </button>
 
         {error ? (
           <div className="space-y-4 p-10 text-center">
-            <p className="text-4xl" aria-hidden="true">⚠️</p>
-            <p className="font-semibold text-white">No se pudo cargar el detalle</p>
-            <p className="text-sm text-slate-400">{error}</p>
+            <p className="font-sign text-2xl">No se pudo cargar el detalle</p>
+            <p className="text-wall-deep/70">{error}</p>
             <button
               type="button"
               onClick={retry}
-              className="rounded-full bg-amber-400 px-5 py-2 text-sm font-bold text-slate-950 transition hover:bg-amber-300"
+              className="rounded-full bg-wall-deep px-6 py-2.5 font-bold text-cream transition-colors hover:bg-sign"
             >
               Reintentar
             </button>
           </div>
         ) : !movie ? (
-          <div className="grid animate-pulse gap-6 p-6 md:grid-cols-[280px_1fr] md:p-8" aria-busy="true">
-            <div className="aspect-[2/3] rounded-2xl bg-slate-800" />
+          <div className="grid animate-pulse gap-8 p-6 md:grid-cols-[260px_1fr] md:p-10" aria-busy="true">
+            <div className="mx-auto aspect-[2/3] w-48 rounded-[3px] bg-wall-deep/10 md:mx-0 md:w-full" />
             <div className="space-y-4">
-              <div className="h-8 w-2/3 rounded bg-slate-800" />
-              <div className="h-4 w-1/3 rounded bg-slate-800" />
-              <div className="h-24 rounded bg-slate-800" />
-              <div className="h-32 rounded bg-slate-800" />
+              <div className="h-10 w-2/3 rounded bg-wall-deep/10" />
+              <div className="h-6 w-1/3 rounded bg-wall-deep/10" />
+              <div className="h-24 rounded bg-wall-deep/10" />
+              <div className="h-32 rounded bg-wall-deep/10" />
             </div>
           </div>
         ) : (
-          <div className="grid gap-6 p-6 md:grid-cols-[280px_1fr] md:p-8">
-            <div className="mx-auto aspect-[2/3] w-48 overflow-hidden rounded-2xl bg-slate-800 md:mx-0 md:w-full">
-              <Poster src={movie.Poster} title={movie.Title} />
+          <div className="grid gap-8 p-6 md:grid-cols-[260px_1fr] md:p-10">
+            <div className="relative mx-auto w-48 md:mx-0 md:w-full md:-rotate-2">
+              <div className="aspect-[2/3] overflow-hidden rounded-[3px] bg-wall-deep shadow-[6px_6px_0_0_rgb(0_0_0/0.25)]">
+                <Poster src={movie.Poster} title={movie.Title} />
+              </div>
             </div>
 
             <div className="space-y-5">
-              <div>
-                <h2 className="pr-10 text-3xl font-extrabold leading-tight text-white">{movie.Title}</h2>
-                <p className="mt-1 text-sm text-slate-400">{meta.join(' · ')}</p>
-              </div>
+              <h2 className="pr-12 font-sign text-3xl leading-[1.05] md:text-5xl">{movie.Title}</h2>
 
-              {hasValue(movie.Genre) && (
-                <div className="flex flex-wrap gap-2">
-                  {movie.Genre.split(', ').map((genre) => (
-                    <span key={genre} className="rounded-full bg-indigo-500/20 px-3 py-1 text-xs font-semibold text-indigo-200">
+              <ul className="flex flex-wrap gap-2">
+                {meta.map((item) => (
+                  <li key={item} className="rounded-md border-2 border-wall-deep/30 px-2.5 py-0.5 text-sm font-semibold">
+                    {item}
+                  </li>
+                ))}
+                {hasValue(movie.Genre) &&
+                  movie.Genre.split(', ').map((genre) => (
+                    <li key={genre} className="rounded-md bg-wall-deep px-2.5 py-0.5 text-sm font-semibold text-cream">
                       {genre}
-                    </span>
+                    </li>
                   ))}
-                </div>
-              )}
+              </ul>
 
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
                 {hasValue(movie.imdbRating) && (
-                  <div className="rounded-xl bg-amber-400/15 px-4 py-2">
-                    <p className="text-xl font-extrabold text-amber-400">★ {movie.imdbRating}<span className="text-sm font-semibold text-amber-400/70">/10</span></p>
-                    {hasValue(movie.imdbVotes) && <p className="text-xs text-slate-400">{movie.imdbVotes} votos en IMDb</p>}
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-[4.5rem] w-[4.5rem] -rotate-6 items-center justify-center rounded-full bg-sticker font-sign text-xl shadow-[0_3px_0_0_rgb(0_0_0/0.25)]">
+                      {movie.imdbRating}
+                    </span>
+                    <div className="text-sm">
+                      <p className="font-bold">IMDb</p>
+                      {hasValue(movie.imdbVotes) && <p className="text-wall-deep/70">{movie.imdbVotes} votos</p>}
+                    </div>
                   </div>
                 )}
                 {otherRatings.map((rating) => (
-                  <div key={rating.Source} className="rounded-xl bg-white/5 px-4 py-2">
-                    <p className="text-lg font-bold text-white">{rating.Value}</p>
-                    <p className="text-xs text-slate-400">{rating.Source}</p>
+                  <div key={rating.Source} className="flex items-center gap-3">
+                    <span className="flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full border-4 border-wall-deep font-sign text-sm">
+                      {rating.Value}
+                    </span>
+                    <p className="text-sm font-bold">{rating.Source}</p>
                   </div>
                 ))}
               </div>
 
-              {hasValue(movie.Plot) && <p className="leading-relaxed text-slate-300">{movie.Plot}</p>}
+              {hasValue(movie.Plot) && <p className="max-w-prose text-lg leading-relaxed">{movie.Plot}</p>}
 
-              <dl className="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-2">
+              <dl className="divide-y divide-wall-deep/15">
                 {details.map(([label, value]) => (
-                  <div key={label} className={label === 'Reparto' || label === 'Premios' ? 'sm:col-span-2' : undefined}>
-                    <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</dt>
-                    <dd className="text-slate-200">{value}</dd>
+                  <div key={label} className="grid gap-1 py-2.5 sm:grid-cols-[7rem_1fr] sm:gap-4">
+                    <dt className="font-bold">{label}</dt>
+                    <dd>{value}</dd>
                   </div>
                 ))}
               </dl>
@@ -178,9 +187,9 @@ export default function MovieModal({ imdbID, onClose }: MovieModalProps) {
                 href={`https://www.imdb.com/title/${movie.imdbID}/`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block rounded-full bg-amber-400 px-5 py-2 text-sm font-bold text-slate-950 transition hover:bg-amber-300"
+                className="inline-block rounded-full bg-wall-deep px-6 py-3 font-bold text-cream transition-colors hover:bg-sign"
               >
-                Ver en IMDb ↗
+                Ver en IMDb
               </a>
             </div>
           </div>
