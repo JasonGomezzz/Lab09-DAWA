@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CineGalería | Películas y Series",
+  title: "Videoclub 09 | Películas y Series",
   description: "Galería de películas y series con renderizado SSR y CSR usando la API de OMDb",
 };
 
