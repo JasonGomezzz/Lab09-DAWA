@@ -6,7 +6,7 @@ Repositorio: https://github.com/JasonGomezzz/Lab09-DAWA
 
 ## Requisitos
 
-- Node.js superior a 18.18
+- Node.js 20.9 o superior (el enunciado pide superior a 18.18, pero Next.js 16 exige 20.9)
 - npm
 - Una clave gratuita de OMDb (1000 peticiones por día): https://www.omdbapi.com/apikey.aspx
 
