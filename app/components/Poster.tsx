@@ -14,9 +14,8 @@ export default function Poster({ src, title }: PosterProps) {
 
   if (!hasValue(src) || failed) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-2 text-slate-500">
-        <span className="text-5xl" aria-hidden="true">🎞️</span>
-        <span className="text-xs">Sin póster</span>
+      <div className="flex h-full items-center justify-center border-2 border-dashed border-cream/30 bg-wall-deep p-3 text-center text-sm font-semibold text-cream/60">
+        Sin póster
       </div>
     )
   }
