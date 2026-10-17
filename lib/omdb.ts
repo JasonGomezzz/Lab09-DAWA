@@ -78,7 +78,13 @@ export async function searchMovies(query: string, page = 1, type?: MovieType): P
   }
 }
 
+// La lista casi no cambia y cada visita a la home cuesta 12 peticiones: se guarda una hora para cuidar el límite diario de OMDb
+const POPULAR_TTL_MS = 60 * 60 * 1000
+let popularCache: { movies: MovieDetail[]; expiresAt: number } | null = null
+
 export async function getPopularMovies() {
+  if (popularCache && popularCache.expiresAt > Date.now()) return popularCache.movies
+
   const results = await Promise.allSettled(POPULAR_IDS.map((id) => getMovieById(id)))
   const movies = results.flatMap((result) => (result.status === 'fulfilled' ? [result.value] : []))
 
@@ -86,5 +92,7 @@ export async function getPopularMovies() {
     const failure = results.find((result) => result.status === 'rejected')
     throw failure?.status === 'rejected' ? failure.reason : new OmdbError('Sin resultados', 502)
   }
+  // una lista incompleta no se guarda, para reintentar en la siguiente visita
+  if (movies.length === POPULAR_IDS.length) popularCache = { movies, expiresAt: Date.now() + POPULAR_TTL_MS }
   return movies
 }
