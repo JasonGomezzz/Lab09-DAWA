@@ -11,6 +11,12 @@ const MIN_CHARS = 2
 const DEBOUNCE_MS = 400
 const SUGGESTIONS = ['Marvel', 'Batman', 'Star Wars', 'Suits']
 
+const TYPE_OPTIONS: { value: MovieType | ''; label: string }[] = [
+  { value: '', label: 'Todo' },
+  { value: 'movie', label: 'Películas' },
+  { value: 'series', label: 'Series' },
+]
+
 type Status = 'idle' | 'loading' | 'done' | 'error'
 
 export default function SearchGallery({ initialId }: { initialId?: string }) {
@@ -87,16 +93,14 @@ export default function SearchGallery({ initialId }: { initialId?: string }) {
 
   return (
     <main className="mx-auto max-w-7xl px-6 pb-20">
-      <section className="py-12 text-center">
-        <span className="inline-block rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-1 text-xs font-semibold text-emerald-300">
-          🔄 Búsqueda en el cliente (CSR)
-        </span>
-        <h1 className="mt-4 text-4xl font-extrabold text-white sm:text-5xl">Busca películas y series</h1>
-        <p className="mx-auto mt-3 max-w-xl text-slate-400">
-          Los resultados aparecen mientras escribes, sin recargar la página. Haz clic en una tarjeta para ver su detalle.
+      <section className="py-10 md:py-14">
+        <p className="mb-4 inline-block -rotate-2 rounded-full bg-cream px-3 py-1 text-sm font-semibold text-wall-deep">
+          Esta búsqueda corre en tu navegador (CSR)
         </p>
+        <h1 className="font-sign text-4xl leading-tight md:text-6xl">¿Qué quieres ver hoy?</h1>
+        <p className="mt-3 text-lg text-cream/80">Escribe y los resultados aparecen solos, sin recargar la página.</p>
 
-        <div className="mx-auto mt-8 flex max-w-2xl flex-col gap-3 sm:flex-row">
+        <div className="mt-8 max-w-3xl">
           <label className="sr-only" htmlFor="search-input">Título a buscar</label>
           <input
             id="search-input"
@@ -104,72 +108,88 @@ export default function SearchGallery({ initialId }: { initialId?: string }) {
             autoFocus
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Escribe un título... (ej. Marvel)"
-            className="w-full rounded-full border border-white/15 bg-slate-900 px-6 py-3 text-white placeholder:text-slate-500 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/40"
+            placeholder="Un título, por ejemplo Marvel"
+            className="w-full rounded-xl border-4 border-cream bg-wall-deep px-5 py-4 text-xl font-semibold text-cream placeholder:text-cream/40 focus:border-sticker focus:outline-none md:text-2xl"
           />
-          <label className="sr-only" htmlFor="type-select">Tipo</label>
-          <select
-            id="type-select"
-            value={type}
-            onChange={(event) => setType(event.target.value as MovieType | '')}
-            className="rounded-full border border-white/15 bg-slate-900 px-5 py-3 font-semibold text-slate-200 focus:border-amber-400 focus:outline-none"
-          >
-            <option value="">Todos</option>
-            <option value="movie">Películas</option>
-            <option value="series">Series</option>
-          </select>
-        </div>
-      </section>
 
-      {!ready && (
-        <div className="py-10 text-center">
-          <p className="text-5xl" aria-hidden="true">🍿</p>
-          <p className="mt-3 text-slate-400">Escribe al menos {MIN_CHARS} letras para empezar. Prueba con:</p>
-          <div className="mt-4 flex flex-wrap justify-center gap-2">
-            {SUGGESTIONS.map((suggestion) => (
+          <div role="group" aria-label="Tipo" className="mt-4 flex flex-wrap gap-2">
+            {TYPE_OPTIONS.map((option) => (
               <button
-                key={suggestion}
+                key={option.label}
                 type="button"
-                onClick={() => setQuery(suggestion)}
-                className="rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-amber-400 hover:text-amber-400"
+                aria-pressed={type === option.value}
+                onClick={() => setType(option.value)}
+                className="cursor-pointer rounded-full border-2 border-cream/40 px-4 py-2 font-semibold motion-safe:transition-colors hover:border-cream aria-pressed:border-sticker aria-pressed:bg-sticker aria-pressed:text-wall-deep focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sticker"
               >
-                {suggestion}
+                {option.label}
               </button>
             ))}
           </div>
         </div>
+      </section>
+
+      {!ready && (
+        <div>
+          <div className="max-w-2xl pb-6">
+            <p className="text-lg text-cream/80">
+              El estante está vacío. Escribe al menos {MIN_CHARS} letras o prueba con:
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {SUGGESTIONS.map((suggestion) => (
+                <button
+                  key={suggestion}
+                  type="button"
+                  onClick={() => setQuery(suggestion)}
+                  className="cursor-pointer rounded-full border-2 border-cream/40 px-4 py-1.5 motion-safe:transition-colors hover:border-sticker hover:text-sticker focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sticker"
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
+          </div>
+          <Shelf />
+        </div>
       )}
 
       {ready && status === 'error' && (
-        <div className="mx-auto max-w-lg rounded-2xl border border-red-400/30 bg-red-400/10 p-6 text-center" role="alert">
-          <p className="font-semibold text-red-200">No se pudo completar la búsqueda</p>
-          <p className="mt-1 text-sm text-red-200/80">{message}</p>
+        <div className="max-w-xl rounded-xl border-4 border-sign bg-wall-deep p-6" role="alert">
+          <p className="text-lg font-bold">No se pudo completar la búsqueda</p>
+          <p className="mt-1 text-cream/80">{message}</p>
         </div>
       )}
 
       {ready && status === 'done' && movies.length === 0 && (
-        <div className="py-10 text-center">
-          <p className="text-5xl" aria-hidden="true">🔍</p>
-          <p className="mt-3 font-semibold text-white">Sin resultados para &ldquo;{term}&rdquo;</p>
-          <p className="text-sm text-slate-400">Prueba con otro título o cambia el filtro de tipo.</p>
+        <div>
+          <p className="max-w-2xl pb-6 text-lg text-cream/80">
+            No hay nada con &ldquo;{term}&rdquo; en el estante. Prueba con otro título o cambia el tipo.
+          </p>
+          <Shelf />
         </div>
       )}
 
       {searching && movies.length === 0 && (
-        <ul className="grid animate-pulse grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5" aria-busy="true">
-          {Array.from({ length: 10 }, (_, index) => (
-            <li key={index} className="aspect-[2/3] rounded-2xl bg-slate-900" />
-          ))}
-        </ul>
+        <>
+          <p className="sr-only" role="status">Buscando...</p>
+          <ul className="grid grid-cols-2 gap-x-0 gap-y-12 sm:grid-cols-3 lg:grid-cols-5" aria-busy="true">
+            {Array.from({ length: 10 }, (_, index) => (
+              <li key={index}>
+                <div className="px-3">
+                  <div className="aspect-[2/3] rounded-[3px] bg-wall-deep motion-safe:animate-pulse" />
+                </div>
+                <Shelf />
+              </li>
+            ))}
+          </ul>
+        </>
       )}
 
       {ready && movies.length > 0 && status !== 'error' && (
         <>
-          <p className="mb-5 text-sm text-slate-400" aria-live="polite">
+          <p className="mb-6 text-sm text-cream/70" aria-live="polite">
             {searching ? 'Buscando...' : `Mostrando ${movies.length} de ${total} resultados`}
           </p>
           <ul
-            className={`grid grid-cols-2 gap-5 transition-opacity sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 ${
+            className={`grid grid-cols-2 gap-x-0 gap-y-12 motion-safe:transition-opacity sm:grid-cols-3 lg:grid-cols-5 ${
               searching ? 'opacity-50' : ''
             }`}
           >
@@ -178,7 +198,7 @@ export default function SearchGallery({ initialId }: { initialId?: string }) {
                 <button
                   type="button"
                   onClick={() => setSelectedId(movie.imdbID)}
-                  className="block w-full rounded-2xl text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400"
+                  className="block w-full cursor-pointer rounded-lg text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sticker"
                 >
                   <MovieCard movie={movie} />
                 </button>
@@ -187,16 +207,20 @@ export default function SearchGallery({ initialId }: { initialId?: string }) {
           </ul>
 
           {hasMore && !searching && (
-            <div className="mt-10 text-center">
+            <div className="mt-14 text-center">
               <button
                 type="button"
                 onClick={loadMore}
                 disabled={loadingMore}
-                className="rounded-full bg-amber-400 px-8 py-3 font-bold text-slate-950 transition hover:bg-amber-300 disabled:opacity-60"
+                className="cursor-pointer rounded-full bg-sticker px-8 py-3 font-bold text-wall-deep motion-safe:transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sticker disabled:cursor-default disabled:opacity-60"
               >
                 {loadingMore ? 'Cargando...' : 'Cargar más'}
               </button>
-              {moreError && <p className="mt-3 text-sm text-red-300">{moreError}</p>}
+              {moreError && (
+                <p className="mx-auto mt-4 max-w-md rounded-xl border-2 border-sign bg-wall-deep px-4 py-2 text-sm" role="alert">
+                  {moreError}
+                </p>
+              )}
             </div>
           )}
         </>
@@ -204,5 +228,12 @@ export default function SearchGallery({ initialId }: { initialId?: string }) {
 
       {selectedId && <MovieModal key={selectedId} imdbID={selectedId} onClose={closeModal} />}
     </main>
+  )
+}
+
+// Barra de madera decorativa; en la grilla la dibuja cada tarjeta, aquí sirve para los estados sin pósters
+function Shelf() {
+  return (
+    <div aria-hidden="true" className="h-3.5 border-t-4 border-wood-light bg-wood shadow-[0_5px_0_0_var(--color-wood-dark)]" />
   )
 }
