@@ -36,15 +36,18 @@ Los ejercicios 1.1 y 2.1 usan PokeAPI y Open-Meteo, que son públicas y no neces
 
 ```
 app/
-├── page.tsx                        # Galería: populares (SSR)
+├── layout.tsx                      # Layout raíz y metadatos
+├── globals.css                     # Tailwind y paleta del videoclub (pared azul, crema, sticker, rosa, madera)
+├── page.tsx                        # Estantes de Videoclub 09: populares (SSR)
 ├── search/
 │   ├── page.tsx                    # Búsqueda (Server Component que lee ?id=)
 │   └── SearchGallery.tsx           # Búsqueda en tiempo real y modal (CSR)
 ├── components/
-│   ├── MovieCard.tsx               # Tarjeta de película o serie
-│   ├── MovieModal.tsx              # Detalle completo (CSR)
+│   ├── MovieCard.tsx               # Tarjeta: póster parado sobre un estante de madera
+│   ├── MovieModal.tsx              # Detalle completo como ficha de videoclub (CSR)
 │   ├── Poster.tsx                  # Póster con marcador si el enlace de OMDb ya no existe
-│   └── SiteHeader.tsx              # Encabezado y navegación
+│   ├── Shell.tsx                   # Marco común: fuentes Bowlby One y Figtree, encabezado y pie
+│   └── SiteHeader.tsx              # Letrero "Videoclub 09" y navegación
 ├── api/omdb/route.ts               # Endpoint que reenvía a OMDb sin exponer la clave
 ├── pokemon-csr/page.tsx            # Ejercicio 1.1 — Pokémon con CSR
 ├── pokemon-ssr/page.tsx            # Ejercicio 1.1 — Pokémon con SSR
@@ -89,6 +92,41 @@ Respuestas de `/api/omdb`: `200` con datos, `400` por parámetros inválidos, `4
 5. En `/weather`, cambiar la ciudad del selector: solo el widget CSR se actualiza.
 
 En modo desarrollo, React Strict Mode ejecuta dos veces cada `useEffect`, por lo que las peticiones del cliente aparecen duplicadas; en producción es una.
+
+## Despliegue en Vercel
+
+El proyecto no necesita `vercel.json` ni cambios de configuración: Vercel detecta Next.js y ejecuta `npm install` y `next build` por su cuenta. Lo único que hay que crear es la variable `OMDB_API_KEY`.
+
+1. Entrar a https://vercel.com e iniciar sesión con la cuenta de GitHub.
+2. **Add New… > Project** e importar el repositorio `JasonGomezzz/Lab09-DAWA`. Si no aparece en la lista, darle a Vercel acceso al repositorio desde GitHub.
+3. En **Configure Project**, comprobar que el framework detectado es **Next.js** y dejar sin cambios el directorio raíz y los comandos de instalación y de build.
+4. En **Environment Variables**, crear `OMDB_API_KEY` con la clave propia de OMDb (https://www.omdbapi.com/apikey.aspx) y marcar **Production**, **Preview** y **Development**. El archivo `.env.local` no se sube (git lo ignora): la clave se escribe en el panel. No usar el prefijo `NEXT_PUBLIC_`, porque la enviaría al navegador.
+5. Pulsar **Deploy** y esperar a que termine el build.
+6. Probar en el dominio de producción que Vercel muestra al terminar: `/`, `/search`, `/api/omdb?s=marvel` (devuelve JSON con `movies` y `total`), `/pokemon-csr`, `/pokemon-ssr` y `/weather`. Conviene compartir ese dominio y no la URL de un despliegue concreto o de una rama: si el proyecto tiene activada la Deployment Protection, esas URLs piden iniciar sesión en Vercel.
+7. Si se cambia o se agrega una variable, hay que volver a desplegar (**Deployments > Redeploy**): los despliegues existentes conservan los valores con los que se crearon. Cada `git push` a `main` genera un despliegue de producción nuevo.
+
+### Si falta la variable
+
+El build pasa igual, porque la clave solo se lee al atender una petición. En ejecución, la home muestra "Falta la clave OMDB_API_KEY en .env.local" (el mensaje menciona `.env.local` aunque se esté en Vercel) y `/api/omdb` responde `500`. Con una clave inválida el mensaje es "La clave OMDB_API_KEY configurada no es válida", también con `500`. Los ejercicios Pokémon y clima no dependen de la clave.
+
+### Alternativa por CLI
+
+```bash
+npx vercel login
+npx vercel                          # primer despliegue: vincula el proyecto y crea un preview
+npx vercel env add OMDB_API_KEY     # pide el valor y los entornos
+npx vercel --prod                   # despliegue de producción
+```
+
+### Verificaciones previas
+
+Hechas sin desplegar, con Node v22.18.0 y Next.js 16.4.2:
+
+- **Build sin clave:** `next build` sobre el último commit, extraído con `git archive` a una carpeta limpia (sin `.env.local` y con `OMDB_API_KEY` sin definir), compila, pasa TypeScript y termina con código 0.
+- **Rutas:** dinámicas (ƒ) `/`, `/search`, `/api/omdb`, `/pokemon-ssr` y `/weather`; estáticas (○) `/pokemon-csr` y `/_not-found`.
+- **Node:** Next.js 16.4.2 declara `engines.node` en `>=20.9.0`; la documentación de Vercel lista Node 22.x y 24.x (24.x por defecto), que lo cumplen.
+- **Secretos:** `git grep` solo encuentra la lectura de `process.env.OMDB_API_KEY` en `lib/omdb.ts` y el valor de ejemplo `tu_clave_de_omdb` en `.env.example`; `.env.local` está ignorado y su clave no aparece en ningún commit del historial.
+- **Fuentes:** `next/font/google` (Geist, Geist Mono, Bowlby One y Figtree) descarga las fuentes durante `next build` y las sirve como archivos estáticos del propio sitio; el build en carpeta limpia las obtuvo sin configuración adicional.
 
 ## Desviaciones respecto al enunciado
 
